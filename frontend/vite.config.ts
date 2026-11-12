@@ -1,7 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Production (GitHub Pages) : le site vit sous /hermann-ai2.0/. Développement : racine.
+  base: command === "build" ? "/hermann-ai2.0/" : "/",
   plugins: [react()],
   server: {
     host: true,
@@ -9,4 +11,4 @@ export default defineConfig({
     allowedHosts: [".app.github.dev"],
     proxy: { "/api": "http://localhost:8000" },
   },
-});
+}));
