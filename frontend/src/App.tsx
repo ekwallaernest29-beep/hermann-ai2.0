@@ -1,33 +1,145 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import Sphere from "./components/Sphere";
+import Waveform from "./components/Waveform";
+import {
+  IconeHistorique,
+  IconeLune,
+  IconeMicro,
+  IconeMicroCoupe,
+  IconePlay,
+  IconeReglages,
+  IconeStop,
+} from "./components/Icones";
+import { ETATS, NOMS, ORDRE, type Etat } from "./etats";
 
 const API = import.meta.env.VITE_API_URL ?? "";
 
-type Etat = "verification" | "connecte" | "injoignable";
+type Serveur = "verification" | "connecte" | "injoignable";
 
-const LIBELLES: Record<Etat, string> = {
+const LIBELLE_SERVEUR: Record<Serveur, string> = {
   verification: "Vérification du serveur…",
   connecte: "Serveur connecté",
   injoignable: "Serveur injoignable",
 };
 
+type Action = {
+  libelle: string;
+  icone: ReactNode;
+  vers?: Etat;
+  desactive?: boolean;
+};
+
+// Aperçu : la voix n'est pas encore active, ces transitions servent à visualiser l'interface.
+const ACTION_PRINCIPALE: Record<Etat, Action> = {
+  veille: { libelle: "Activer micro", icone: <IconeMicro />, vers: "ecoute" },
+  ecoute: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
+  reflexion: { libelle: "Micro en pause", icone: <IconeMicroCoupe />, desactive: true },
+  parole: { libelle: "Interrompre", icone: <IconeStop />, vers: "interruption" },
+  interruption: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
+};
+
+type CommandeProps = {
+  libelle: string;
+  icone: ReactNode;
+  onClick?: () => void;
+  principal?: boolean;
+  desactive?: boolean;
+  titre?: string;
+};
+
+function Commande({ libelle, icone, onClick, principal, desactive, titre }: CommandeProps) {
+  return (
+    <button
+      type="button"
+      className={`commande${principal ? " principal" : ""}`}
+      onClick={onClick}
+      disabled={desactive}
+      title={desactive ? titre : undefined}
+    >
+      <span className="pastille">{icone}</span>
+      <span className="legende">{libelle}</span>
+    </button>
+  );
+}
+
 export default function App() {
-  const [etat, setEtat] = useState<Etat>("verification");
+  const [serveur, setServeur] = useState<Serveur>("verification");
+  const [etat, setEtat] = useState<Etat>("veille");
 
   useEffect(() => {
-    fetch(`${API}/api/health`)
+    const ctrl = new AbortController();
+    fetch(`${API}/api/health`, { signal: ctrl.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(() => setEtat("connecte"))
-      .catch(() => setEtat("injoignable"));
+      .then(() => setServeur("connecte"))
+      .catch(() => {
+        if (!ctrl.signal.aborted) setServeur("injoignable");
+      });
+    return () => ctrl.abort();
   }, []);
 
+  const def = ETATS[etat];
+  const action = ACTION_PRINCIPALE[etat];
+  const ondesActives = etat === "ecoute" || etat === "interruption" || etat === "parole";
+
   return (
-    <main className="accueil">
-      <div className={`sphere sphere-${etat}`} aria-hidden="true" />
-      <h1>HERMANN AI</h1>
-      <p className="sous-titre">Votre assistant personnel intelligent.</p>
-      <p className={`etat etat-${etat}`} role="status">
-        {LIBELLES[etat]}
+    <div className="ecran" data-etat={etat}>
+      <header className="entete">
+        <div className="marque">
+          <span className="logo" aria-hidden="true">H</span>
+          <h1 className="nom">
+            HERMANN <b>AI</b>
+          </h1>
+        </div>
+        <button
+          type="button"
+          className="reglages"
+          disabled
+          title="Paramètres : bientôt disponible"
+          aria-label="Paramètres (bientôt disponible)"
+        >
+          <IconeReglages />
+        </button>
+      </header>
+
+      <p className={`serveur serveur-${serveur}`} role="status">
+        {LIBELLE_SERVEUR[serveur]}
       </p>
-    </main>
+
+      <main className="scene">
+        <Sphere etat={etat} />
+        <section className="texte" aria-live="polite">
+          <p className="badge">{def.badge}</p>
+          {def.titre && <p className="titre">{def.titre}</p>}
+          <p className="message">{def.texte}</p>
+          <p className="detail">{def.detail}</p>
+          <Waveform actif={ondesActives} />
+        </section>
+      </main>
+
+      <nav className="actions" aria-label="Commandes">
+        <Commande libelle="Historique" icone={<IconeHistorique />} desactive titre="Bientôt disponible" />
+        <Commande
+          principal
+          libelle={action.libelle}
+          icone={action.icone}
+          desactive={action.desactive}
+          titre="Indisponible pendant la réflexion"
+          onClick={() => action.vers && setEtat(action.vers)}
+        />
+        <Commande libelle="Reprendre" icone={<IconePlay />} desactive titre="Fonction à définir" />
+        <Commande libelle="Veille" icone={<IconeLune />} onClick={() => setEtat("veille")} />
+      </nav>
+
+      <aside className="demo" aria-label="Aperçu de l’interface">
+        <p>Aperçu de l’interface · la voix n’est pas encore active</p>
+        <div role="group" aria-label="Choisir un état à prévisualiser">
+          {ORDRE.map((e) => (
+            <button key={e} type="button" aria-pressed={e === etat} onClick={() => setEtat(e)}>
+              {NOMS[e]}
+            </button>
+          ))}
+        </div>
+      </aside>
+    </div>
   );
 }

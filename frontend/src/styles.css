@@ -5,7 +5,10 @@
   --gris-ardoise: #66716d;
   --menthe: #a8dcc5;
   --vert-profond: #315f50;
+  --bord: rgba(49, 95, 80, 0.18);
+  --ombre: 0 8px 20px rgba(49, 95, 80, 0.12);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -13,51 +16,160 @@
 html, body, #root { height: 100%; margin: 0; }
 
 body {
-  background: var(--blanc-casse);
+  background: radial-gradient(120% 55% at 50% 0%, var(--beige), transparent 70%), var(--blanc-casse);
   color: var(--vert-profond);
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-.accueil {
+button { font: inherit; color: inherit; }
+
+:focus-visible { outline: 3px solid var(--vert-profond); outline-offset: 3px; }
+
+.ecran {
+  width: 100%;
+  max-width: 560px;
   min-height: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  text-align: center;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 20px calc(env(safe-area-inset-bottom, 0px) + 16px);
 }
 
-h1 { margin: 0; letter-spacing: 0.12em; font-size: 1.6rem; }
-.sous-titre { margin: 0; color: var(--gris-ardoise); }
+.entete { display: flex; align-items: center; justify-content: space-between; }
+.marque { display: flex; align-items: center; gap: 12px; }
+
+.logo {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: 12px; background: var(--gris-clair); border: 1px solid var(--bord);
+  font-weight: 700;
+}
+
+.nom { margin: 0; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.14em; }
+.nom b {
+  margin-left: 4px; padding: 2px 8px; border-radius: 6px;
+  background: var(--menthe); color: var(--vert-profond);
+}
+
+.reglages {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: 12px; border: 1px solid var(--bord); background: var(--gris-clair);
+}
+.reglages:disabled { opacity: 0.55; cursor: not-allowed; }
+.reglages svg { width: 22px; height: 22px; }
+
+svg { stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.serveur {
+  align-self: center; margin: 4px 0 0; padding: 0.3rem 0.8rem;
+  border-radius: 999px; background: var(--gris-clair);
+  font-size: 0.8rem; display: flex; align-items: center; gap: 8px;
+}
+.serveur::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gris-ardoise); }
+.serveur-connecte { background: var(--menthe); }
+.serveur-connecte::before { background: var(--vert-profond); }
+.serveur-verification::before { animation: clignote 1.2s ease-in-out infinite; }
+
+.scene {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px; text-align: center;
+}
 
 .sphere {
-  width: 168px;
-  height: 168px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--blanc-casse), var(--menthe) 55%, var(--vert-profond));
-  box-shadow: 0 18px 40px rgba(49, 95, 80, 0.25);
-  animation: respiration 5s ease-in-out infinite;
+  width: min(62vw, 300px); aspect-ratio: 1;
+  filter: drop-shadow(0 18px 30px rgba(49, 95, 80, 0.22));
+}
+.sphere svg { width: 100%; height: 100%; overflow: visible; stroke: none; }
+
+.sphere .noyau, .sphere .maillage, .sphere .onde, .sphere .orbite {
+  transform-box: fill-box; transform-origin: center;
+}
+.sphere .noyau { animation: respire 6s ease-in-out infinite; }
+.sphere .maillage { animation: tourne 60s linear infinite; }
+.sphere .maillage ellipse {
+  fill: none; stroke: var(--vert-profond); stroke-opacity: 0.28; stroke-width: 0.8;
+}
+.sphere .reflet { fill: var(--blanc-casse); opacity: 0.35; }
+.sphere .onde, .sphere .orbite {
+  fill: none; stroke: var(--vert-profond); stroke-width: 1.5; opacity: 0;
+}
+.sphere .orbite { stroke-dasharray: 3 7; }
+
+.sphere-veille .noyau { animation-duration: 9s; }
+.sphere-ecoute .onde, .sphere-interruption .onde { animation: onde 2.4s ease-out infinite; }
+.sphere-ecoute .onde-2, .sphere-interruption .onde-2 { animation-delay: 1.2s; }
+.sphere-reflexion .maillage { animation-duration: 10s; }
+.sphere-reflexion .orbite { opacity: 0.5; animation: tourne 6s linear infinite; }
+.sphere-parole .noyau { animation: parle 1.6s ease-in-out infinite; }
+.sphere-interruption .noyau { animation: sursaut 0.5s ease-out 1; }
+
+.texte { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 34ch; }
+
+.badge {
+  margin: 0; padding: 0.35rem 0.9rem; border-radius: 999px;
+  background: var(--menthe); color: var(--vert-profond);
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+}
+.titre { margin: 0; font-size: clamp(1.6rem, 6vw, 2rem); font-weight: 700; }
+.message { margin: 0; font-size: 1.05rem; line-height: 1.45; }
+.detail { margin: 0; color: var(--gris-ardoise); font-size: 0.85rem; }
+
+.onde-son { display: flex; align-items: center; justify-content: center; gap: 4px; height: 36px; margin-top: 4px; }
+.onde-son span { width: 3px; height: 6px; border-radius: 2px; background: var(--vert-profond); opacity: 0.35; }
+.onde-son.actif span { opacity: 0.85; animation: barre 0.9s ease-in-out infinite alternate; }
+
+.actions { display: grid; grid-template-columns: repeat(4, 1fr); align-items: end; gap: 8px; padding: 12px 0 4px; }
+
+.commande {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 4px; border: 0; background: none; cursor: pointer;
+  font-size: 0.78rem; color: var(--gris-ardoise);
+}
+.pastille {
+  width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--gris-clair); color: var(--vert-profond);
+  border: 1px solid var(--bord); box-shadow: var(--ombre);
+}
+.pastille svg { width: 24px; height: 24px; }
+.principal .pastille { width: 68px; height: 68px; background: var(--menthe); }
+.principal .legende { color: var(--vert-profond); font-weight: 600; }
+.commande:disabled { cursor: not-allowed; opacity: 0.55; }
+.commande:not(:disabled):active .pastille { transform: scale(0.96); }
+
+.demo {
+  margin-top: 8px; padding: 10px 12px; border-radius: 16px;
+  background: var(--gris-clair); color: var(--gris-ardoise);
+  font-size: 0.78rem; text-align: center;
+}
+.demo p { margin: 0 0 8px; }
+.demo div { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.demo button {
+  padding: 0.3rem 0.7rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--bord); background: var(--blanc-casse); color: var(--vert-profond);
+}
+.demo button[aria-pressed="true"] {
+  background: var(--vert-profond); border-color: var(--vert-profond); color: var(--blanc-casse);
 }
 
-@keyframes respiration {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+@media (orientation: landscape) and (max-height: 520px) {
+  .ecran { max-width: 920px; }
+  .scene { flex-direction: row; gap: 24px; }
+  .sphere { width: min(40vh, 200px); }
+  .texte { align-items: flex-start; text-align: left; }
 }
+
+@keyframes tourne { to { transform: rotate(360deg); } }
+@keyframes respire { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+@keyframes parle {
+  0%, 100% { transform: scale(1); } 25% { transform: scale(1.05); }
+  55% { transform: scale(1.01); } 80% { transform: scale(1.04); }
+}
+@keyframes sursaut { 0% { transform: scale(0.95); } 100% { transform: scale(1); } }
+@keyframes onde { 0% { opacity: 0.45; transform: scale(1); } 100% { opacity: 0; transform: scale(1.45); } }
+@keyframes barre { from { height: 15%; } to { height: var(--h, 60%); } }
+@keyframes clignote { 50% { opacity: 0.25; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .sphere { animation: none; }
+  .sphere *, .onde-son span, .serveur::before { animation: none !important; }
+  .sphere-ecoute .onde-1, .sphere-interruption .onde-1 { opacity: 0.3; transform: scale(1.12); }
+  .onde-son.actif span { height: var(--h, 60%); }
 }
-
-.etat {
-  margin: 1rem 0 0;
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  background: var(--gris-clair);
-  color: var(--vert-profond);
-  font-size: 0.9rem;
-}
-.etat-connecte { background: var(--menthe); }
-.etat-injoignable { background: var(--beige); }
