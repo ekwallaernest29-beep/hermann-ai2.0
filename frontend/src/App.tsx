@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EXEMPLES, SOUVENIRS_EXEMPLES, type Conversation, type Souvenir } from "./donnees";
 import Accueil from "./ecrans/Accueil";
+import { Reglage } from "./ecrans/ApercuReglages";
 import {
   DetailEchange,
   ListeHistorique,
@@ -86,6 +87,8 @@ export default function App() {
       );
     case "souvenir-suppression":
       return <SuppressionSouvenir souvenir={trouverSouvenir(route.id)} confirmer={supprimerSouvenir} />;
+    case "reglage":
+      return <Reglage page={route.page} />;
     default:
       return <Accueil />;
   }

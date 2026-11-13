@@ -2,17 +2,17 @@ import Entete from "../components/Entete";
 import { IconeChevron } from "../components/Icones";
 import { aller } from "../route";
 
-type Ligne = { titre: string; detail: string; vers?: string };
+type Ligne = { titre: string; detail: string; vers: string; apercu?: boolean };
 
 const LIGNES: Ligne[] = [
-  { titre: "Compte", detail: "Profil et informations personnelles" },
-  { titre: "Sécurité", detail: "Mot de passe, 2FA et sessions" },
-  { titre: "Appareils", detail: "Gérer les appareils autorisés" },
-  { titre: "Synchronisation", detail: "Cloud et mises à jour" },
-  { titre: "Voix et langue", detail: "Voix de Hermann et préférences" },
-  { titre: "Microphone", detail: "Autorisation et confidentialité" },
+  { titre: "Compte", detail: "Profil et informations personnelles", vers: "#/parametres/compte", apercu: true },
+  { titre: "Sécurité", detail: "Mot de passe, 2FA et sessions", vers: "#/parametres/securite", apercu: true },
+  { titre: "Appareils", detail: "Gérer les appareils autorisés", vers: "#/parametres/appareils", apercu: true },
+  { titre: "Synchronisation", detail: "Cloud et mises à jour", vers: "#/parametres/synchronisation", apercu: true },
+  { titre: "Voix et langue", detail: "Voix de Hermann et préférences", vers: "#/parametres/voix", apercu: true },
+  { titre: "Microphone", detail: "Autorisation et confidentialité", vers: "#/parametres/microphone", apercu: true },
   { titre: "Historique et mémoire", detail: "Deux espaces à gérer séparément", vers: "#/parametres/historique-memoire" },
-  { titre: "Notifications", detail: "Connexion, sécurité et alertes" },
+  { titre: "Notifications", detail: "Connexion, sécurité et alertes", vers: "#/parametres/notifications", apercu: true },
 ];
 
 export function Parametres() {
@@ -25,26 +25,20 @@ export function Parametres() {
         <ul className="liste-reglages">
           {LIGNES.map((l) => (
             <li key={l.titre}>
-              {l.vers ? (
-                <a className="ligne-reglage" href={l.vers}>
-                  <span>
-                    <strong>{l.titre}</strong>
-                    <small>{l.detail}</small>
-                  </span>
-                  <IconeChevron />
-                </a>
-              ) : (
-                <div className="ligne-reglage" aria-disabled="true">
-                  <span>
-                    <strong>{l.titre}</strong>
-                    <small>{l.detail}</small>
-                  </span>
-                  <span className="bientot">Bientôt</span>
-                </div>
-              )}
+              <a className="ligne-reglage" href={l.vers}>
+                <span>
+                  <strong>{l.titre}</strong>
+                  <small>{l.detail}</small>
+                </span>
+                {l.apercu && <span className="bientot">Aperçu</span>}
+                <IconeChevron />
+              </a>
             </li>
           ))}
         </ul>
+        <a className="bouton" href="#/etats">
+          États du service (aperçu)
+        </a>
       </main>
     </div>
   );

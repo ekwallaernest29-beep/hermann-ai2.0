@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 
+export type PageReglage =
+  | "compte"
+  | "securite"
+  | "appareils"
+  | "revoquer"
+  | "synchronisation"
+  | "voix"
+  | "microphone"
+  | "notifications"
+  | "etats";
+
 export type Route =
   | { nom: "accueil" }
   | { nom: "historique" }
@@ -10,10 +21,22 @@ export type Route =
   | { nom: "memoire" }
   | { nom: "souvenir"; id: string }
   | { nom: "souvenir-modifier"; id: string }
-  | { nom: "souvenir-suppression"; id: string };
+  | { nom: "souvenir-suppression"; id: string }
+  | { nom: "reglage"; page: PageReglage };
+
+const PAGES: PageReglage[] = [
+  "compte",
+  "securite",
+  "appareils",
+  "synchronisation",
+  "voix",
+  "microphone",
+  "notifications",
+];
 
 function lire(): Route {
   const [a, b, c] = window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  if (a === "etats") return { nom: "reglage", page: "etats" };
   if (a === "historique") {
     if (b && c === "supprimer") return { nom: "suppression", id: b };
     if (b) return { nom: "conversation", id: b };
@@ -27,6 +50,9 @@ function lire(): Route {
   }
   if (a === "parametres") {
     if (b === "historique-memoire") return { nom: "parametres-hm" };
+    if (b === "appareils" && c === "revoquer") return { nom: "reglage", page: "revoquer" };
+    const page = PAGES.find((p) => p === b);
+    if (page) return { nom: "reglage", page };
     return { nom: "parametres" };
   }
   return { nom: "accueil" };

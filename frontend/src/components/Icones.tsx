@@ -91,3 +91,45 @@ export const IconeMemoire = () => (
     <path d="M12 3a6 6 0 0 0-4 10.5V16h8v-2.5A6 6 0 0 0 12 3zM9 19h6M10 22h4" />
   </Icone>
 );
+
+export const IconeNuage = () => (
+  <Icone>
+    <path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17.5 18H7z" />
+  </Icone>
+);
+
+export const IconeSynchro = () => (
+  <Icone>
+    <path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4" />
+  </Icone>
+);
+
+export const IconeAvertissement = () => (
+  <Icone>
+    <path d="M12 3l10 18H2L12 3zM12 10v5M12 18v.5" />
+  </Icone>
+);
+
+export const IconeBouclier = () => (
+  <Icone>
+    <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" />
+  </Icone>
+);
+
+export const IconeUtilisateur = () => (
+  <Icone>
+    <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0" />
+  </Icone>
+);
+
+export const IconeTelephone = () => (
+  <Icone>
+    <path d="M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM11 18h2" />
+  </Icone>
+);
+
+export const IconeOrdinateur = () => (
+  <Icone>
+    <path d="M4 5h16v11H4zM2 19h20" />
+  </Icone>
+);
