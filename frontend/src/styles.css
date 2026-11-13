@@ -437,3 +437,18 @@ a.bouton { text-decoration: none; }
 .carte-etat p { margin: 0; font-size: 0.9rem; }
 .carte-etat small { color: var(--gris-ardoise); font-size: 0.78rem; }
 .icone-etat svg { width: 22px; height: 22px; }
+
+/* ---------- Micro réel ---------- */
+.sphere {
+  transform: scale(calc(1 + var(--niveau, 0) * 0.08));
+  transition: transform 90ms linear;
+}
+.onde-son.reel span {
+  animation: none;
+  opacity: 0.9;
+  height: calc(var(--h, 60%) * (0.15 + var(--niveau, 0) * 0.85));
+  transition: height 90ms linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sphere { transform: none; transition: none; }
+}

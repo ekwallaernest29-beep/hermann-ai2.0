@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Apercu from "../components/Apercu";
 import Entete from "../components/Entete";
 import Sphere from "../components/Sphere";
@@ -11,8 +11,9 @@ import {
   IconePlay,
   IconeStop,
 } from "../components/Icones";
-import { ETATS, NOMS, ORDRE, type Etat } from "../etats";
+import { ETATS, NOMS, ORDRE, type DefEtat, type Etat } from "../etats";
 import { aller } from "../route";
+import { useMicro } from "../useMicro";
 
 const API = import.meta.env.VITE_API_URL ?? "";
 
@@ -27,18 +28,19 @@ const LIBELLE_SERVEUR: Record<Serveur, string> = {
 type Action = {
   libelle: string;
   icone: ReactNode;
-  vers?: Etat;
   desactive?: boolean;
+  surClic?: () => void;
 };
 
-// Aperçu : la voix n'est pas encore active, ces transitions servent à visualiser l'interface.
-const ACTION_PRINCIPALE: Record<Etat, Action> = {
+// Aperçu : ces transitions servent à visualiser l'interface, sans micro ni voix.
+const APERCU: Record<Etat, { libelle: string; icone: ReactNode; vers?: Etat; desactive?: boolean }> = {
   veille: { libelle: "Activer micro", icone: <IconeMicro />, vers: "ecoute" },
   ecoute: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
   reflexion: { libelle: "Micro en pause", icone: <IconeMicroCoupe />, desactive: true },
-  parole: { libelle: "Interrompre", icone: <IconeStop />, vers: "interruption" },
+  parole: { libelle: "Interrupteur", icone: <IconeStop />, vers: "interruption" },
   interruption: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
 };
+APERCU.parole.libelle = "Interrompre";
 
 type CommandeProps = {
   libelle: string;
@@ -67,6 +69,14 @@ function Commande({ libelle, icone, onClick, principal, desactive, titre }: Comm
 export default function Accueil() {
   const [serveur, setServeur] = useState<Serveur>("verification");
   const [etat, setEtat] = useState<Etat>("veille");
+  const racine = useRef<HTMLDivElement>(null);
+
+  const surNiveau = useCallback((n: number) => {
+    racine.current?.style.setProperty("--niveau", n.toFixed(3));
+  }, []);
+  const micro = useMicro({ onNiveau: surNiveau });
+  const reel = micro.statut === "actif";
+  const demande = micro.statut === "demande";
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -79,12 +89,64 @@ export default function Accueil() {
     return () => ctrl.abort();
   }, []);
 
-  const def = ETATS[etat];
-  const action = ACTION_PRINCIPALE[etat];
-  const ondesActives = etat === "ecoute" || etat === "interruption" || etat === "parole";
+  const choisir = (e: Etat) => {
+    micro.arreter();
+    micro.effacerErreur();
+    setEtat(e);
+  };
+
+  let def: DefEtat;
+  let etatSphere: Etat = etat;
+  if (reel) {
+    etatSphere = "ecoute";
+    def = {
+      badge: "MICROPHONE ACTIF",
+      texte: micro.parle ? "Je vous entends." : "Je vous écoute…",
+      detail:
+        "Détection de voix uniquement · rien n’est enregistré ni envoyé. La compréhension de la parole arrive ensuite.",
+    };
+  } else if (demande) {
+    etatSphere = "veille";
+    def = {
+      badge: "AUTORISATION EN COURS",
+      texte: "Acceptez la demande d’accès au microphone.",
+      detail: "Votre navigateur va vous demander l’autorisation.",
+    };
+  } else if (micro.erreur) {
+    etatSphere = "veille";
+    def = {
+      badge: micro.erreur.titre.toUpperCase(),
+      texte: micro.erreur.texte,
+      detail: "Aucun accès au microphone.",
+    };
+  } else {
+    def = ETATS[etat];
+  }
+
+  let action: Action;
+  if (reel) {
+    action = { libelle: "Couper micro", icone: <IconeMicro />, surClic: micro.arreter };
+  } else if (demande) {
+    action = { libelle: "Autorisation…", icone: <IconeMicro />, desactive: true };
+  } else if (etat === "veille") {
+    action = { libelle: "Activer micro", icone: <IconeMicro />, surClic: micro.demarrer };
+  } else {
+    const p = APERCU[etat];
+    action = {
+      libelle: p.libelle,
+      icone: p.icone,
+      desactive: p.desactive,
+      surClic: p.vers ? () => setEtat(p.vers as Etat) : undefined,
+    };
+  }
+
+  const ondesActives = reel
+    ? micro.parle
+    : etat === "ecoute" || etat === "interruption" || etat === "parole";
+  const afficherApercu = !reel && !demande && !micro.erreur;
 
   return (
-    <div className="ecran" data-etat={etat}>
+    <div className="ecran" data-etat={etatSphere} ref={racine}>
       <Entete />
 
       <p className={`serveur serveur-${serveur}`} role="status">
@@ -92,13 +154,13 @@ export default function Accueil() {
       </p>
 
       <main className="scene">
-        <Sphere etat={etat} />
+        <Sphere etat={etatSphere} />
         <section className="texte" aria-live="polite">
           <p className="badge">{def.badge}</p>
-          {def.titre && <p className="titre">{def.titre}</p>}
+          {afficherApercu && def.titre && <p className="titre">{def.titre}</p>}
           <p className="message">{def.texte}</p>
           <p className="detail">{def.detail}</p>
-          <Waveform actif={ondesActives} />
+          <Waveform actif={ondesActives} reel={reel} />
         </section>
       </main>
 
@@ -109,18 +171,18 @@ export default function Accueil() {
           libelle={action.libelle}
           icone={action.icone}
           desactive={action.desactive}
-          titre="Indisponible pendant la réflexion"
-          onClick={() => action.vers && setEtat(action.vers)}
+          titre="Indisponible pour le moment"
+          onClick={action.surClic}
         />
         <Commande libelle="Reprendre" icone={<IconePlay />} desactive titre="Fonction à définir" />
-        <Commande libelle="Veille" icone={<IconeLune />} onClick={() => setEtat("veille")} />
+        <Commande libelle="Veille" icone={<IconeLune />} onClick={() => choisir("veille")} />
       </nav>
 
       <Apercu
-        note="Aperçu de l’interface · la voix n’est pas encore active"
+        note="Aperçu de l’interface · seul le micro est réel, la compréhension et les réponses ne sont pas encore actives"
         options={ORDRE.map((e) => ({ id: e, nom: NOMS[e] }))}
         valeur={etat}
-        onChoisir={(id) => setEtat(id as Etat)}
+        onChoisir={(id) => choisir(id as Etat)}
       />
     </div>
   );

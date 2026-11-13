@@ -2,9 +2,11 @@ import type { CSSProperties } from "react";
 
 const BARRES = 28;
 
-export default function Waveform({ actif }: { actif: boolean }) {
+type Props = { actif: boolean; reel?: boolean };
+
+export default function Waveform({ actif, reel }: Props) {
   return (
-    <div className={`onde-son${actif ? " actif" : ""}`} aria-hidden="true">
+    <div className={`onde-son${actif ? " actif" : ""}${reel ? " reel" : ""}`} aria-hidden="true">
       {Array.from({ length: BARRES }, (_, i) => (
         <span
           key={i}
