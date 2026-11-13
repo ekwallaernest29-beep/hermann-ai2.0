@@ -27,6 +27,9 @@ async def en_tetes_securite(request, call_next):
     reponse.headers["X-Content-Type-Options"] = "nosniff"
     reponse.headers["X-Frame-Options"] = "DENY"
     reponse.headers["Referrer-Policy"] = "no-referrer"
+    reponse.headers["Strict-Transport-Security"] = "max-age=31536000"
+    if not dev:
+        reponse.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
     return reponse
 
 

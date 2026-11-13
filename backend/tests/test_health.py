@@ -10,3 +10,4 @@ def test_health():
     assert r.status_code == 200
     assert r.json()["status"] == "ok"
     assert r.headers["x-content-type-options"] == "nosniff"
+    assert "max-age" in r.headers["strict-transport-security"]
