@@ -173,3 +173,115 @@ svg { stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round
   .sphere-ecoute .onde-1, .sphere-interruption .onde-1 { opacity: 0.3; transform: scale(1.12); }
   .onde-son.actif span { height: var(--h, 60%); }
 }
+
+/* ---------- Historique et pages secondaires ---------- */
+.demo { color: var(--vert-profond); }
+
+.retour {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; margin: 4px 0 0; padding: 0 4px; border: 0; background: none;
+  color: var(--vert-profond); font-weight: 600; cursor: pointer;
+}
+.retour svg { width: 18px; height: 18px; }
+
+.page { flex: 1; display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+.page h1 { margin: 4px 0 0; font-size: clamp(1.6rem, 6vw, 2rem); }
+.sous-titre { margin: 0; color: var(--gris-ardoise); font-size: 0.9rem; }
+
+.etiquette-exemple {
+  align-self: flex-start; margin: 0; padding: 0.2rem 0.6rem; border-radius: 6px;
+  background: var(--beige); font-size: 0.72rem; font-weight: 600;
+}
+
+.groupe {
+  margin: 12px 0 8px; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; color: var(--gris-ardoise);
+}
+
+.carte {
+  padding: 14px 16px; border-radius: 18px; background: var(--blanc-casse);
+  border: 1px solid var(--bord); box-shadow: var(--ombre);
+}
+.carte + .carte { margin-top: 12px; }
+.titre-carte { margin: 4px 0 0; font-size: 1.05rem; font-weight: 600; }
+
+.carte-echange { display: flex; flex-direction: column; gap: 6px; }
+.carte-echange header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.carte-echange h3 { margin: 0; font-size: 1.05rem; }
+.carte-echange time { color: var(--gris-ardoise); font-size: 0.85rem; }
+.carte-echange p { margin: 0; color: var(--gris-ardoise); font-size: 0.9rem; }
+.carte-echange footer { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+
+.lien, .lien-bouton {
+  min-height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 4px;
+  border: 0; background: none; font-size: 0.9rem; font-weight: 600;
+  color: var(--vert-profond); text-decoration: none; cursor: pointer;
+}
+.lien-bouton:disabled { opacity: 0.55; cursor: not-allowed; }
+.lien svg, .lien-bouton svg { width: 18px; height: 18px; }
+
+.bandeau { display: flex; flex-direction: column; gap: 6px; }
+.bandeau strong {
+  display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+  padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--menthe); font-size: 0.8rem;
+}
+.bandeau.alerte strong { background: var(--beige); }
+.bandeau p { margin: 0; font-size: 0.9rem; }
+.bandeau .bouton { align-self: flex-start; }
+
+.rond {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--vert-profond); border-top-color: transparent;
+  animation: tourne 0.9s linear infinite;
+}
+
+.squelette {
+  height: 84px; border-radius: 18px;
+  background: linear-gradient(90deg, var(--gris-clair), var(--beige), var(--gris-clair));
+  background-size: 200% 100%; animation: brille 1.6s linear infinite;
+}
+@keyframes brille { to { background-position: -200% 0; } }
+
+.etat-page {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 28px 12px; text-align: center;
+}
+.etat-page svg { width: 40px; height: 40px; }
+.etat-page h1, .etat-page h2 { margin: 0; font-size: 1.3rem; }
+.etat-page p { margin: 0; color: var(--gris-ardoise); max-width: 32ch; }
+
+.bouton {
+  min-height: 48px; padding: 0 20px; border-radius: 14px;
+  border: 1px solid var(--bord); background: var(--gris-clair); color: var(--vert-profond);
+  font-weight: 600; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.bouton.menthe { background: var(--menthe); }
+.bouton.plein { background: var(--vert-profond); border-color: var(--vert-profond); color: var(--blanc-casse); }
+.bouton:disabled { opacity: 0.55; cursor: not-allowed; }
+.bouton svg { width: 20px; height: 20px; }
+
+.boutons-bas { display: grid; gap: 10px; margin-top: auto; padding-top: 8px; }
+
+.puce-date {
+  align-self: flex-start; margin: 0; padding: 0.3rem 0.8rem;
+  border-radius: 999px; background: var(--gris-clair); font-size: 0.8rem;
+}
+.fil { display: flex; flex-direction: column; gap: 16px; }
+.tour .qui {
+  margin: 0 0 4px; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; color: var(--gris-ardoise);
+}
+.tour .texte-tour { margin: 0; line-height: 1.5; white-space: pre-line; }
+.tour.hermann { padding-left: 12px; border-left: 3px solid var(--menthe); }
+
+.carte-alerte { display: flex; flex-direction: column; gap: 10px; }
+.carte-alerte svg { width: 32px; height: 32px; }
+.carte-alerte h2 { margin: 0; font-size: 1.3rem; }
+.carte-alerte p { margin: 0; }
+
+.note-bas { margin: 8px 0 0; color: var(--gris-ardoise); font-size: 0.8rem; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rond, .squelette { animation: none; }
+}

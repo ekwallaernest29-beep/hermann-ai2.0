@@ -55,3 +55,21 @@ export const IconeReglages = () => (
     <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" />
   </Icone>
 );
+
+export const IconeFleche = () => (
+  <Icone>
+    <path d="M19 12H5M11 6l-6 6 6 6" />
+  </Icone>
+);
+
+export const IconeCorbeille = () => (
+  <Icone>
+    <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+  </Icone>
+);
+
+export const IconeOuvrir = () => (
+  <Icone>
+    <path d="M7 17L17 7M9 7h8v8" />
+  </Icone>
+);

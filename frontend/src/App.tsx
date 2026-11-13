@@ -1,145 +1,40 @@
-import { useEffect, useState, type ReactNode } from "react";
-import Sphere from "./components/Sphere";
-import Waveform from "./components/Waveform";
+import { useState } from "react";
+import { EXEMPLES, type Conversation } from "./donnees";
+import Accueil from "./ecrans/Accueil";
 import {
-  IconeHistorique,
-  IconeLune,
-  IconeMicro,
-  IconeMicroCoupe,
-  IconePlay,
-  IconeReglages,
-  IconeStop,
-} from "./components/Icones";
-import { ETATS, NOMS, ORDRE, type Etat } from "./etats";
-
-const API = import.meta.env.VITE_API_URL ?? "";
-
-type Serveur = "verification" | "connecte" | "injoignable";
-
-const LIBELLE_SERVEUR: Record<Serveur, string> = {
-  verification: "Vérification du serveur…",
-  connecte: "Serveur connecté",
-  injoignable: "Serveur injoignable",
-};
-
-type Action = {
-  libelle: string;
-  icone: ReactNode;
-  vers?: Etat;
-  desactive?: boolean;
-};
-
-// Aperçu : la voix n'est pas encore active, ces transitions servent à visualiser l'interface.
-const ACTION_PRINCIPALE: Record<Etat, Action> = {
-  veille: { libelle: "Activer micro", icone: <IconeMicro />, vers: "ecoute" },
-  ecoute: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
-  reflexion: { libelle: "Micro en pause", icone: <IconeMicroCoupe />, desactive: true },
-  parole: { libelle: "Interrompre", icone: <IconeStop />, vers: "interruption" },
-  interruption: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
-};
-
-type CommandeProps = {
-  libelle: string;
-  icone: ReactNode;
-  onClick?: () => void;
-  principal?: boolean;
-  desactive?: boolean;
-  titre?: string;
-};
-
-function Commande({ libelle, icone, onClick, principal, desactive, titre }: CommandeProps) {
-  return (
-    <button
-      type="button"
-      className={`commande${principal ? " principal" : ""}`}
-      onClick={onClick}
-      disabled={desactive}
-      title={desactive ? titre : undefined}
-    >
-      <span className="pastille">{icone}</span>
-      <span className="legende">{libelle}</span>
-    </button>
-  );
-}
+  DetailEchange,
+  ListeHistorique,
+  SuppressionEchange,
+  type VueHistorique,
+} from "./ecrans/Historique";
+import { aller, useRoute } from "./route";
 
 export default function App() {
-  const [serveur, setServeur] = useState<Serveur>("verification");
-  const [etat, setEtat] = useState<Etat>("veille");
+  const route = useRoute();
+  const [conversations, setConversations] = useState<Conversation[]>(EXEMPLES);
+  const [vue, setVue] = useState<VueHistorique>("liste");
 
-  useEffect(() => {
-    const ctrl = new AbortController();
-    fetch(`${API}/api/health`, { signal: ctrl.signal })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(() => setServeur("connecte"))
-      .catch(() => {
-        if (!ctrl.signal.aborted) setServeur("injoignable");
-      });
-    return () => ctrl.abort();
-  }, []);
+  const changerVue = (v: VueHistorique) => {
+    if (v === "liste" && conversations.length === 0) setConversations(EXEMPLES);
+    setVue(v);
+  };
 
-  const def = ETATS[etat];
-  const action = ACTION_PRINCIPALE[etat];
-  const ondesActives = etat === "ecoute" || etat === "interruption" || etat === "parole";
+  const trouver = (id: string) => conversations.find((c) => c.id === id);
 
-  return (
-    <div className="ecran" data-etat={etat}>
-      <header className="entete">
-        <div className="marque">
-          <span className="logo" aria-hidden="true">H</span>
-          <h1 className="nom">
-            HERMANN <b>AI</b>
-          </h1>
-        </div>
-        <button
-          type="button"
-          className="reglages"
-          disabled
-          title="Paramètres : bientôt disponible"
-          aria-label="Paramètres (bientôt disponible)"
-        >
-          <IconeReglages />
-        </button>
-      </header>
+  const supprimer = (id: string) => {
+    setConversations((liste) => liste.filter((c) => c.id !== id));
+    setVue("liste");
+    aller("/historique");
+  };
 
-      <p className={`serveur serveur-${serveur}`} role="status">
-        {LIBELLE_SERVEUR[serveur]}
-      </p>
-
-      <main className="scene">
-        <Sphere etat={etat} />
-        <section className="texte" aria-live="polite">
-          <p className="badge">{def.badge}</p>
-          {def.titre && <p className="titre">{def.titre}</p>}
-          <p className="message">{def.texte}</p>
-          <p className="detail">{def.detail}</p>
-          <Waveform actif={ondesActives} />
-        </section>
-      </main>
-
-      <nav className="actions" aria-label="Commandes">
-        <Commande libelle="Historique" icone={<IconeHistorique />} desactive titre="Bientôt disponible" />
-        <Commande
-          principal
-          libelle={action.libelle}
-          icone={action.icone}
-          desactive={action.desactive}
-          titre="Indisponible pendant la réflexion"
-          onClick={() => action.vers && setEtat(action.vers)}
-        />
-        <Commande libelle="Reprendre" icone={<IconePlay />} desactive titre="Fonction à définir" />
-        <Commande libelle="Veille" icone={<IconeLune />} onClick={() => setEtat("veille")} />
-      </nav>
-
-      <aside className="demo" aria-label="Aperçu de l’interface">
-        <p>Aperçu de l’interface · la voix n’est pas encore active</p>
-        <div role="group" aria-label="Choisir un état à prévisualiser">
-          {ORDRE.map((e) => (
-            <button key={e} type="button" aria-pressed={e === etat} onClick={() => setEtat(e)}>
-              {NOMS[e]}
-            </button>
-          ))}
-        </div>
-      </aside>
-    </div>
-  );
+  switch (route.nom) {
+    case "historique":
+      return <ListeHistorique conversations={conversations} vue={vue} changerVue={changerVue} />;
+    case "conversation":
+      return <DetailEchange echange={trouver(route.id)} />;
+    case "suppression":
+      return <SuppressionEchange echange={trouver(route.id)} confirmer={supprimer} />;
+    default:
+      return <Accueil />;
+  }
 }
