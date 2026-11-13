@@ -11,15 +11,9 @@ export default function Entete({ retour }: { retour?: () => void }) {
             HERMANN <b>AI</b>
           </Balise>
         </div>
-        <button
-          type="button"
-          className="reglages"
-          disabled
-          title="Paramètres : bientôt disponible"
-          aria-label="Paramètres (bientôt disponible)"
-        >
+        <a className="reglages" href="#/parametres" aria-label="Paramètres">
           <IconeReglages />
-        </button>
+        </a>
       </header>
       {retour && (
         <button type="button" className="retour" onClick={retour}>

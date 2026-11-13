@@ -73,3 +73,21 @@ export const IconeOuvrir = () => (
     <path d="M7 17L17 7M9 7h8v8" />
   </Icone>
 );
+
+export const IconeChevron = () => (
+  <Icone>
+    <path d="M9 6l6 6-6 6" />
+  </Icone>
+);
+
+export const IconeCrayon = () => (
+  <Icone>
+    <path d="M4 20l4-1 11-11-3-3L5 16l-1 4zM14 6l3 3" />
+  </Icone>
+);
+
+export const IconeMemoire = () => (
+  <Icone>
+    <path d="M12 3a6 6 0 0 0-4 10.5V16h8v-2.5A6 6 0 0 0 12 3zM9 19h6M10 22h4" />
+  </Icone>
+);

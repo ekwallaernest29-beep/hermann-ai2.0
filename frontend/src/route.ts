@@ -4,14 +4,30 @@ export type Route =
   | { nom: "accueil" }
   | { nom: "historique" }
   | { nom: "conversation"; id: string }
-  | { nom: "suppression"; id: string };
+  | { nom: "suppression"; id: string }
+  | { nom: "parametres" }
+  | { nom: "parametres-hm" }
+  | { nom: "memoire" }
+  | { nom: "souvenir"; id: string }
+  | { nom: "souvenir-modifier"; id: string }
+  | { nom: "souvenir-suppression"; id: string };
 
 function lire(): Route {
-  const morceaux = window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
-  if (morceaux[0] === "historique") {
-    if (morceaux[1] && morceaux[2] === "supprimer") return { nom: "suppression", id: morceaux[1] };
-    if (morceaux[1]) return { nom: "conversation", id: morceaux[1] };
+  const [a, b, c] = window.location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  if (a === "historique") {
+    if (b && c === "supprimer") return { nom: "suppression", id: b };
+    if (b) return { nom: "conversation", id: b };
     return { nom: "historique" };
+  }
+  if (a === "memoire") {
+    if (b && c === "modifier") return { nom: "souvenir-modifier", id: b };
+    if (b && c === "supprimer") return { nom: "souvenir-suppression", id: b };
+    if (b) return { nom: "souvenir", id: b };
+    return { nom: "memoire" };
+  }
+  if (a === "parametres") {
+    if (b === "historique-memoire") return { nom: "parametres-hm" };
+    return { nom: "parametres" };
   }
   return { nom: "accueil" };
 }

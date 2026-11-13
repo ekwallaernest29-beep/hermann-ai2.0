@@ -64,3 +64,46 @@ export const EXEMPLES: Conversation[] = [
     ],
   },
 ];
+
+export type CategorieSouvenir = "Préférences" | "Habitudes" | "Projets";
+
+export type Souvenir = {
+  id: string;
+  categorie: CategorieSouvenir;
+  titre: string;
+  resume: string;
+  contenu: string;
+  origine: string;
+  maj: string;
+};
+
+// Données d'exemple pour l'aperçu de l'interface : aucun souvenir réel n'est enregistré.
+export const SOUVENIRS_EXEMPLES: Souvenir[] = [
+  {
+    id: "s1",
+    categorie: "Préférences",
+    titre: "Des réponses concises",
+    resume: "Vous préférez aller à l’essentiel, avec des exemples concrets.",
+    contenu: "Je préfère les réponses concises, avec des exemples concrets.",
+    origine: "Indiqué pendant votre échange du 8 novembre à 09:12.",
+    maj: "8 novembre · 09:12",
+  },
+  {
+    id: "s2",
+    categorie: "Habitudes",
+    titre: "Vos matinées au calme",
+    resume: "Vous réservez le matin aux tâches qui demandent de la concentration.",
+    contenu: "Je réserve le matin aux tâches qui demandent de la concentration.",
+    origine: "Indiqué pendant votre échange du 6 novembre à 08:54.",
+    maj: "6 novembre · 08:54",
+  },
+  {
+    id: "s3",
+    categorie: "Projets",
+    titre: "La présentation de lundi",
+    resume: "Votre présentation doit faire ressortir trois idées principales.",
+    contenu: "Ma présentation de lundi doit faire ressortir trois idées principales.",
+    origine: "Indiqué pendant votre échange du 7 novembre à 18:20.",
+    maj: "7 novembre · 18:20",
+  },
+];

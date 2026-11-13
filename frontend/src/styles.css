@@ -285,3 +285,44 @@ svg { stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round
 @media (prefers-reduced-motion: reduce) {
   .rond, .squelette { animation: none; }
 }
+
+/* ---------- Mémoire et paramètres ---------- */
+.reglages { color: var(--vert-profond); text-decoration: none; }
+
+.liste-reglages {
+  list-style: none; margin: 0; padding: 0; overflow: hidden;
+  border-radius: 18px; background: var(--blanc-casse);
+  border: 1px solid var(--bord); box-shadow: var(--ombre);
+}
+.liste-reglages li + li { border-top: 1px solid var(--bord); }
+.ligne-reglage {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 64px; padding: 10px 16px; color: inherit; text-decoration: none;
+}
+.ligne-reglage strong { display: block; }
+.ligne-reglage small { color: var(--gris-ardoise); font-size: 0.82rem; }
+.ligne-reglage[aria-disabled="true"] { opacity: 0.65; }
+.ligne-reglage svg { width: 20px; height: 20px; flex: none; }
+.bientot {
+  flex: none; padding: 0.15rem 0.5rem; border-radius: 6px;
+  background: var(--beige); font-size: 0.72rem; font-weight: 700;
+}
+
+.carte-souvenir {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  color: inherit; text-decoration: none;
+}
+.carte-souvenir h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.carte-souvenir p { margin: 0; font-size: 0.9rem; color: var(--gris-ardoise); }
+.carte-souvenir svg { width: 20px; height: 20px; flex: none; }
+
+.formulaire { display: flex; flex-direction: column; gap: 14px; }
+.champ { display: flex; flex-direction: column; gap: 6px; }
+.champ label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; color: var(--gris-ardoise);
+}
+.champ input, .champ select, .champ textarea {
+  font: inherit; font-size: 1rem; padding: 12px 14px; border-radius: 14px;
+  border: 1px solid var(--bord); background: var(--blanc-casse); color: var(--vert-profond);
+}
+.champ textarea { min-height: 120px; resize: vertical; }
