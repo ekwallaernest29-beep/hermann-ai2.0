@@ -9,7 +9,7 @@ const LIGNES: Ligne[] = [
   { titre: "Sécurité", detail: "Mot de passe, 2FA et sessions", vers: "#/parametres/securite", apercu: true },
   { titre: "Appareils", detail: "Gérer les appareils autorisés", vers: "#/parametres/appareils", apercu: true },
   { titre: "Synchronisation", detail: "Cloud et mises à jour", vers: "#/parametres/synchronisation", apercu: true },
-  { titre: "Voix et langue", detail: "Voix de Hermann et préférences", vers: "#/parametres/voix", apercu: true },
+  { titre: "Voix et langue", detail: "Voix de Hermann et préférences", vers: "#/parametres/voix" },
   { titre: "Microphone", detail: "Autorisation et confidentialité", vers: "#/parametres/microphone", apercu: true },
   { titre: "Historique et mémoire", detail: "Deux espaces à gérer séparément", vers: "#/parametres/historique-memoire" },
   { titre: "Notifications", detail: "Connexion, sécurité et alertes", vers: "#/parametres/notifications", apercu: true },

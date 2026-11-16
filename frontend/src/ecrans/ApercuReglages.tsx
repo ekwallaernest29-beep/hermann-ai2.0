@@ -1,3 +1,4 @@
+import VoixLangue from "./VoixLangue";
 import type { ReactNode } from "react";
 import Interrupteur from "../components/Interrupteur";
 import {
@@ -370,7 +371,7 @@ export function Reglage({ page }: { page: PageReglage }) {
     case "synchronisation":
       return <Synchronisation />;
     case "voix":
-      return <Voix />;
+      return <VoixLangue />;
     case "microphone":
       return <Microphone />;
     case "notifications":

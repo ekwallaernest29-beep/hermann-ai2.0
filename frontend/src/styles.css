@@ -463,3 +463,7 @@ a.bouton { text-decoration: none; }
 }
 .bandeau-reseau.retabli { background: var(--menthe); }
 input[type="range"] { width: 100%; accent-color: var(--vert-profond); }
+
+/* ---------- Choix de la voix ---------- */
+.carte-appareil.choisie { border-color: var(--vert-profond); border-width: 2px; }
+.carte-appareil .boutons-bas { margin-top: 0; padding-top: 0; }
