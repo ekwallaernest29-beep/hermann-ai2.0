@@ -452,3 +452,14 @@ a.bouton { text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   .sphere { transform: none; transition: none; }
 }
+
+/* ---------- Réseau et essai des voix ---------- */
+.bandeau-reseau {
+  position: sticky; top: 0; z-index: 10; margin: 0;
+  padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 8px;
+  background: var(--beige); color: var(--vert-profond);
+  border-bottom: 1px solid var(--bord);
+  text-align: center; font-size: 0.85rem; font-weight: 600;
+}
+.bandeau-reseau.retabli { background: var(--menthe); }
+input[type="range"] { width: 100%; accent-color: var(--vert-profond); }

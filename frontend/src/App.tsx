@@ -1,4 +1,6 @@
-import { useState } from "react";
+import BandeauReseau from "./components/BandeauReseau";
+import EssaiVoix from "./ecrans/EssaiVoix";
+import { useEffect, useState } from "react";
 import { EXEMPLES, SOUVENIRS_EXEMPLES, type Conversation, type Souvenir } from "./donnees";
 import Accueil from "./ecrans/Accueil";
 import { Reglage } from "./ecrans/ApercuReglages";
@@ -19,7 +21,7 @@ import {
 import { Parametres, ParametresHM } from "./ecrans/Parametres";
 import { aller, useRoute } from "./route";
 
-export default function App() {
+function Ecrans() {
   const route = useRoute();
   const [conversations, setConversations] = useState<Conversation[]>(EXEMPLES);
   const [vue, setVue] = useState<VueHistorique>("liste");
@@ -92,4 +94,25 @@ export default function App() {
     default:
       return <Accueil />;
   }
+}
+
+function useHash() {
+  const [hash, setHash] = useState(window.location.hash);
+  useEffect(() => {
+    const maj = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", maj);
+    return () => window.removeEventListener("hashchange", maj);
+  }, []);
+  return hash;
+}
+
+export default function App() {
+  const hash = useHash();
+  if (hash === "#/essai-voix") return <EssaiVoix />;
+  return (
+    <>
+      <BandeauReseau />
+      <Ecrans />
+    </>
+  );
 }

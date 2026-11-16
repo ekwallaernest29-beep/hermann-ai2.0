@@ -37,10 +37,9 @@ const APERCU: Record<Etat, { libelle: string; icone: ReactNode; vers?: Etat; des
   veille: { libelle: "Activer micro", icone: <IconeMicro />, vers: "ecoute" },
   ecoute: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
   reflexion: { libelle: "Micro en pause", icone: <IconeMicroCoupe />, desactive: true },
-  parole: { libelle: "Interrupteur", icone: <IconeStop />, vers: "interruption" },
+  parole: { libelle: "Interrompre", icone: <IconeStop />, vers: "interruption" },
   interruption: { libelle: "Couper micro", icone: <IconeMicro />, vers: "veille" },
 };
-APERCU.parole.libelle = "Interrompre";
 
 type CommandeProps = {
   libelle: string;
