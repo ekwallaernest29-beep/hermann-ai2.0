@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     access_code: str = ""
     groq_api_key: str = ""
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-flash-latest"
+    gemini_model: str = "gemini-3.5-flash-lite"
     groq_stt_model: str = "whisper-large-v3-turbo"
 
 

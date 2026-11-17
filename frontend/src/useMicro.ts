@@ -25,10 +25,10 @@ function traduire(e: unknown): ErreurMicro {
   return { titre: "Micro indisponible", texte: "Une erreur est survenue. Réessayez dans un instant." };
 }
 
-type Options = { onNiveau?: (niveau: number) => void };
+type Options = { onNiveau?: (niveau: number) => void; onFinParole?: () => void };
 
-// Micro réel : l'analyse du son reste sur l'appareil. Rien n'est enregistré ni envoyé.
-export function useMicro({ onNiveau }: Options = {}) {
+// Micro réel : l'analyse du son reste sur l'appareil. Rien n'est enregistré ici.
+export function useMicro({ onNiveau, onFinParole }: Options = {}) {
   const [statut, setStatut] = useState<StatutMicro>("inactif");
   const [parle, setParle] = useState(false);
   const [erreur, setErreur] = useState<ErreurMicro | null>(null);
@@ -37,10 +37,14 @@ export function useMicro({ onNiveau }: Options = {}) {
   const raf = useRef(0);
   const occupe = useRef(false);
   const surNiveau = useRef(onNiveau);
+  const surFin = useRef(onFinParole);
 
   useEffect(() => {
     surNiveau.current = onNiveau;
+    surFin.current = onFinParole;
   });
+
+  const lireFlux = useCallback(() => flux.current, []);
 
   const arreter = useCallback(() => {
     cancelAnimationFrame(raf.current);
@@ -88,6 +92,7 @@ export function useMicro({ onNiveau }: Options = {}) {
       let lisse = 0;
 
       const boucle = (t: number) => {
+        if (!flux.current) return;
         analyseur.getFloatTimeDomainData(donnees);
         let somme = 0;
         for (let i = 0; i < donnees.length; i++) somme += donnees[i] * donnees[i];
@@ -104,9 +109,10 @@ export function useMicro({ onNiveau }: Options = {}) {
             setParle(true);
           }
         } else if (enParole) {
-          if (t - dernierSon > 600) {
+          if (t - dernierSon > 900) {
             enParole = false;
             setParle(false);
+            surFin.current?.();
           }
         } else {
           debutVoix = 0;
@@ -147,5 +153,5 @@ export function useMicro({ onNiveau }: Options = {}) {
 
   const effacerErreur = useCallback(() => setErreur(null), []);
 
-  return { statut, parle, erreur, demarrer, arreter, effacerErreur };
+  return { statut, parle, erreur, demarrer, arreter, effacerErreur, lireFlux };
 }

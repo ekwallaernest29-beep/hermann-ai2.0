@@ -37,7 +37,7 @@ async def transcrire(contenu: bytes, nom: str, type_mime: str) -> str:
         r.raise_for_status()
         return str(r.json().get("text", "")).strip()
     except (httpx.HTTPError, ValueError) as e:
-        log.warning("Groq : %s", e)
+        log.warning("Groq : %s %s", type(e).__name__, e)
         raise _indisponible("de reconnaissance vocale") from None
 
 
@@ -50,7 +50,7 @@ async def repondre(messages: list[dict]) -> str:
             {"role": "user" if m["role"] == "user" else "model", "parts": [{"text": m["texte"]}]}
             for m in messages
         ],
-        "generationConfig": {"maxOutputTokens": 400, "temperature": 0.7},
+        "generationConfig": {"maxOutputTokens": 800, "temperature": 0.7},
     }
     try:
         async with httpx.AsyncClient(timeout=30) as client:
@@ -63,7 +63,7 @@ async def repondre(messages: list[dict]) -> str:
         parties = r.json()["candidates"][0]["content"]["parts"]
         texte = "".join(p.get("text", "") for p in parties).strip()
     except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError) as e:
-        log.warning("Gemini : %s", e)
+        log.warning("Gemini : %s %s", type(e).__name__, e)
         raise _indisponible("d'intelligence artificielle") from None
     if not texte:
         raise _indisponible("d'intelligence artificielle")
