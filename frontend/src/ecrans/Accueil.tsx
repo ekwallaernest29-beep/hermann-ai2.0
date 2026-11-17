@@ -110,6 +110,12 @@ export default function Accueil() {
     return () => ctrl.abort();
   }, []);
 
+  // Après la réponse de Hermann, le micro se réactive tout seul pour continuer la conversation.
+  useEffect(() => {
+    if (dialogue.fins > 0) void micro.demarrer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogue.fins]);
+
   // Fin de parole : on arrête l'enregistrement et on envoie la voix au serveur.
   const terminer = () => {
     const rec = enregistreur.current;

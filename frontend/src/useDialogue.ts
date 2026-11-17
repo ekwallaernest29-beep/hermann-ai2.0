@@ -49,6 +49,8 @@ export function useDialogue() {
   const [erreur, setErreur] = useState<ErreurDialogue | null>(null);
   const historique = useRef<Tour[]>([]);
   const ctrl = useRef<AbortController | null>(null);
+  const coupe = useRef(false);
+  const [fins, setFins] = useState(0);
 
   useEffect(
     () => () => {
@@ -61,6 +63,7 @@ export function useDialogue() {
   const interrompre = useCallback(() => {
     ctrl.current?.abort();
     ctrl.current = null;
+    coupe.current = true;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     setPhase("repos");
   }, []);
@@ -69,6 +72,7 @@ export function useDialogue() {
   const effacerErreur = useCallback(() => setErreur(null), []);
 
   const envoyer = useCallback(async (blob: Blob, nom: string) => {
+    coupe.current = false;
     setErreur(null);
     setReponse("");
     setVous("");
@@ -121,7 +125,10 @@ export function useDialogue() {
       const uri = lirePref(CLES.voix);
       const voix = voixFrancaises().find((v) => v.voiceURI === uri);
       const vitesse = Number(lirePref(CLES.vitesse)) || 1;
-      parler(texteReponse, voix, vitesse, () => setPhase("repos"));
+      parler(texteReponse, voix, vitesse, () => {
+        setPhase("repos");
+        if (!coupe.current) setFins((n) => n + 1);
+      });
     } catch (e) {
       if (controle.signal.aborted) return;
       setErreur(traduire(e));
@@ -129,5 +136,5 @@ export function useDialogue() {
     }
   }, []);
 
-  return { phase, vous, reponse, erreur, envoyer, interrompre, signaler, effacerErreur };
+  return { phase, vous, reponse, erreur, fins, envoyer, interrompre, signaler, effacerErreur };
 }

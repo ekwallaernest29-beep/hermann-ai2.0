@@ -109,7 +109,7 @@ export function useMicro({ onNiveau, onFinParole }: Options = {}) {
             setParle(true);
           }
         } else if (enParole) {
-          if (t - dernierSon > 900) {
+          if (t - dernierSon > 1400) {
             enParole = false;
             setParle(false);
             surFin.current?.();
