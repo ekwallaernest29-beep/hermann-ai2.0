@@ -20,16 +20,21 @@ import {
 } from "./ecrans/Memoire";
 import { Parametres, ParametresHM } from "./ecrans/Parametres";
 import { aller, useRoute } from "./route";
+import { EVENEMENT, chargerConversations, enregistrerConversations } from "./stockage";
 
 function Ecrans() {
   const route = useRoute();
-  const [conversations, setConversations] = useState<Conversation[]>(EXEMPLES);
+  const [conversations, setConversations] = useState<Conversation[]>(chargerConversations);
   const [vue, setVue] = useState<VueHistorique>("liste");
+  useEffect(() => {
+    const maj = () => setConversations(chargerConversations());
+    window.addEventListener(EVENEMENT, maj);
+    return () => window.removeEventListener(EVENEMENT, maj);
+  }, []);
   const [souvenirs, setSouvenirs] = useState<Souvenir[]>(SOUVENIRS_EXEMPLES);
   const [vueMemoire, setVueMemoire] = useState<VueMemoire>("liste");
 
   const changerVue = (v: VueHistorique) => {
-    if (v === "liste" && conversations.length === 0) setConversations(EXEMPLES);
     setVue(v);
   };
 
@@ -42,7 +47,11 @@ function Ecrans() {
   const trouverSouvenir = (id: string) => souvenirs.find((s) => s.id === id);
 
   const supprimer = (id: string) => {
-    setConversations((liste) => liste.filter((c) => c.id !== id));
+    setConversations((liste) => {
+      const reste = liste.filter((c) => c.id !== id);
+      enregistrerConversations(reste);
+      return reste;
+    });
     setVue("liste");
     aller("/historique");
   };

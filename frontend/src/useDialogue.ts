@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { effacerCode, lireCode } from "./acces";
+import { ajouterEchange } from "./stockage";
 import { CLES, lirePref, parler, voixFrancaises } from "./voix";
 
 const API = import.meta.env.VITE_API_URL ?? "";
@@ -116,6 +117,7 @@ export function useDialogue() {
       const { reponse: texteReponse } = (await r2.json()) as { reponse: string };
       historique.current = [...messages, { role: "hermann" as const, texte: texteReponse }].slice(-10);
       setReponse(texteReponse);
+      ajouterEchange(texte, texteReponse);
 
       if (!("speechSynthesis" in window)) {
         setPhase("repos");

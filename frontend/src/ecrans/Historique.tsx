@@ -45,7 +45,7 @@ export function ListeHistorique({ conversations, vue, changerVue }: PropsListe) 
       <main className="page">
         <h1>Historique</h1>
         <p className="sous-titre">Retrouvez le fil de vos échanges avec Hermann.</p>
-        <p className="etiquette-exemple">Données d’exemple · aucun historique réel pour le moment</p>
+        <p className="etiquette-exemple">Enregistré sur cet appareil seulement</p>
 
         {vue === "chargement" && (
           <>
@@ -123,7 +123,7 @@ export function ListeHistorique({ conversations, vue, changerVue }: PropsListe) 
         <p className="note-bas">L’historique n’est pas la mémoire durable de Hermann.</p>
       </main>
       <Apercu
-        note="Aperçu de l’interface · données d’exemple, non enregistrées"
+        note="Aperçu de l’interface · pour visualiser les états de l’écran"
         options={OPTIONS}
         valeur={vue}
         onChoisir={(id) => changerVue(id as VueHistorique)}
@@ -182,7 +182,7 @@ export function DetailEchange({ echange }: { echange?: Conversation }) {
             </div>
           </>
         )}
-        <p className="note-bas">Données d’exemple · non enregistrées</p>
+        <p className="note-bas">Enregistré sur cet appareil seulement</p>
       </main>
     </div>
   );
@@ -229,7 +229,7 @@ export function SuppressionEchange({ echange, confirmer }: PropsSuppression) {
             </section>
           </>
         )}
-        <p className="note-bas">Aperçu : la suppression n’agit que sur les exemples.</p>
+        <p className="note-bas">La suppression n’agit que sur cet appareil.</p>
       </main>
     </div>
   );
