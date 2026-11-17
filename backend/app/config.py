@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     app_name: str = "HERMANN AI"
     environment: str = "development"
     allowed_origins: str = "http://localhost:5173"
+    access_code: str = ""
+    groq_api_key: str = ""
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-flash-latest"
+    groq_stt_model: str = "whisper-large-v3-turbo"
 
 
 settings = Settings()
