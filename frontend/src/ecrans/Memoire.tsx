@@ -39,7 +39,10 @@ export function ListeMemoire({ souvenirs, vue, changerVue }: PropsListe) {
       <main className="page">
         <h1>Mémoire de Hermann</h1>
         <p className="sous-titre">Ce que Hermann retient pour mieux vous accompagner.</p>
-        <p className="etiquette-exemple">Données d’exemple · aucun souvenir réel pour le moment</p>
+        <p className="etiquette-exemple">Enregistré sur cet appareil seulement</p>
+        <a className="bouton menthe" href="#/memoire/nouveau">
+          Ajouter un souvenir
+        </a>
 
         <div className="carte">
           <p>
@@ -93,7 +96,7 @@ export function ListeMemoire({ souvenirs, vue, changerVue }: PropsListe) {
           })}
       </main>
       <Apercu
-        note="Aperçu de l’interface · données d’exemple, non enregistrées"
+        note="Aperçu de l’interface · pour visualiser les états de l’écran"
         options={OPTIONS}
         valeur={vue}
         onChoisir={(id) => changerVue(id as VueMemoire)}
@@ -136,7 +139,7 @@ export function DetailSouvenir({ souvenir }: { souvenir?: Souvenir }) {
             </div>
           </>
         )}
-        <p className="note-bas">Données d’exemple · non enregistrées</p>
+        <p className="note-bas">Enregistré sur cet appareil seulement</p>
       </main>
     </div>
   );
@@ -205,7 +208,7 @@ export function ModifierSouvenir({ souvenir, enregistrer }: PropsModifier) {
             </form>
           </>
         )}
-        <p className="note-bas">Aperçu : les modifications ne sont pas conservées après rechargement.</p>
+        <p className="note-bas">Les modifications restent sur cet appareil.</p>
       </main>
     </div>
   );
@@ -246,7 +249,7 @@ export function SuppressionSouvenir({ souvenir, confirmer }: PropsSuppression) {
             </section>
           </>
         )}
-        <p className="note-bas">Aperçu : la suppression n’agit que sur les exemples.</p>
+        <p className="note-bas">La suppression n’agit que sur cet appareil.</p>
       </main>
     </div>
   );

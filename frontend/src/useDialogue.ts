@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { effacerCode, lireCode } from "./acces";
 import { ajouterEchange } from "./stockage";
+import { avecMemoire } from "./memoireStock";
 import { CLES, lirePref, parler, voixFrancaises } from "./voix";
 
 const API = import.meta.env.VITE_API_URL ?? "";
@@ -110,7 +111,7 @@ export function useDialogue() {
       const r2 = await fetch(`${API}/api/chat`, {
         method: "POST",
         headers: { ...entetes, "Content-Type": "application/json" },
-        body: JSON.stringify({ messages }),
+        body: JSON.stringify({ messages: avecMemoire(messages) }),
         signal: controle.signal,
       });
       if (!r2.ok) throw await echec(r2);

@@ -20,6 +20,8 @@ import {
 } from "./ecrans/Memoire";
 import { Parametres, ParametresHM } from "./ecrans/Parametres";
 import { aller, useRoute } from "./route";
+import AjoutSouvenir from "./ecrans/AjoutSouvenir";
+import { chargerSouvenirs, enregistrerSouvenirs } from "./memoireStock";
 import { EVENEMENT, chargerConversations, enregistrerConversations } from "./stockage";
 
 function Ecrans() {
@@ -31,15 +33,18 @@ function Ecrans() {
     window.addEventListener(EVENEMENT, maj);
     return () => window.removeEventListener(EVENEMENT, maj);
   }, []);
-  const [souvenirs, setSouvenirs] = useState<Souvenir[]>(SOUVENIRS_EXEMPLES);
+  const [souvenirs, setSouvenirs] = useState<Souvenir[]>(chargerSouvenirs);
   const [vueMemoire, setVueMemoire] = useState<VueMemoire>("liste");
+  useEffect(() => {
+    enregistrerSouvenirs(souvenirs);
+  }, [souvenirs]);
 
   const changerVue = (v: VueHistorique) => {
     setVue(v);
   };
 
   const changerVueMemoire = (v: VueMemoire) => {
-    if (v === "liste" && souvenirs.length === 0) setSouvenirs(SOUVENIRS_EXEMPLES);
+    
     setVueMemoire(v);
   };
 
@@ -65,6 +70,17 @@ function Ecrans() {
       ),
     );
     aller(`/memoire/${id}`);
+  };
+
+  const ajouterSouvenir = (champs: Champs) => {
+    const d = new Date();
+    const maj = `${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+    setSouvenirs((liste) => [
+      { id: `s${Date.now()}`, ...champs, resume: champs.contenu, origine: "Ajouté par vous.", maj },
+      ...liste,
+    ]);
+    setVueMemoire("liste");
+    aller("/memoire");
   };
 
   const supprimerSouvenir = (id: string) => {
@@ -98,6 +114,8 @@ function Ecrans() {
       );
     case "souvenir-suppression":
       return <SuppressionSouvenir souvenir={trouverSouvenir(route.id)} confirmer={supprimerSouvenir} />;
+    case "souvenir-ajouter":
+      return <AjoutSouvenir ajouter={ajouterSouvenir} />;
     case "reglage":
       return <Reglage page={route.page} />;
     default:

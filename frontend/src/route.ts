@@ -22,6 +22,7 @@ export type Route =
   | { nom: "souvenir"; id: string }
   | { nom: "souvenir-modifier"; id: string }
   | { nom: "souvenir-suppression"; id: string }
+  | { nom: "souvenir-ajouter" }
   | { nom: "reglage"; page: PageReglage };
 
 const PAGES: PageReglage[] = [
@@ -43,6 +44,7 @@ function lire(): Route {
     return { nom: "historique" };
   }
   if (a === "memoire") {
+    if (b === "nouveau") return { nom: "souvenir-ajouter" };
     if (b && c === "modifier") return { nom: "souvenir-modifier", id: b };
     if (b && c === "supprimer") return { nom: "souvenir-suppression", id: b };
     if (b) return { nom: "souvenir", id: b };
