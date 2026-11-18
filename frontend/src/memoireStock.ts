@@ -17,6 +17,37 @@ export function chargerSouvenirs(): Souvenir[] {
   }
 }
 
+export const EVENEMENT_MEMOIRE = "hermann-memoire";
+
+// Détecte une demande explicite : « Retiens que… », « Souviens-toi que… », « Mémorise… », « N'oublie pas… ».
+export function extraireSouvenir(texte: string): string | null {
+  const m = texte
+    .trim()
+    .match(/^(?:hermann[\s,.!]*)?(?:retiens|souviens-toi|mémorise|n['’]oublie pas)\s+(?:bien\s+)?(?:que\s+|qu['’]\s*|ceci\s*:?\s*)?(.+)$/i);
+  if (!m) return null;
+  const brut = m[1].trim().replace(/[.!\s]+$/, "");
+  if (brut.length < 4) return null;
+  return (brut.charAt(0).toUpperCase() + brut.slice(1)).slice(0, 300);
+}
+
+export function retenir(contenu: string) {
+  const d = new Date();
+  const maj = `${d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+  const titre = contenu.length > 40 ? contenu.slice(0, 39).trimEnd() + "…" : contenu;
+  const liste = chargerSouvenirs();
+  liste.unshift({
+    id: `s${Date.now()}`,
+    categorie: "Préférences",
+    titre,
+    resume: contenu,
+    contenu,
+    origine: "Retenu pendant une conversation, à votre demande.",
+    maj,
+  });
+  enregistrerSouvenirs(liste);
+  window.dispatchEvent(new Event(EVENEMENT_MEMOIRE));
+}
+
 export function enregistrerSouvenirs(liste: Souvenir[]) {
   try {
     window.localStorage.setItem(CLE, JSON.stringify(liste.slice(0, 50)));

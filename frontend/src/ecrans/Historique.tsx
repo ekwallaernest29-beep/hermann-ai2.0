@@ -9,6 +9,11 @@ import {
 } from "../components/Icones";
 import type { Conversation } from "../donnees";
 import { aller } from "../route";
+import { reprendre } from "../stockage";
+
+function relancer(id: string) {
+  if (reprendre(id)) aller("/");
+}
 
 export type VueHistorique = "liste" | "vide" | "chargement" | "horsligne" | "synchro";
 
@@ -106,7 +111,7 @@ export function ListeHistorique({ conversations, vue, changerVue }: PropsListe) 
                     </header>
                     <p>{c.resume}</p>
                     <footer>
-                      <button type="button" className="lien-bouton" disabled title="Disponible avec la voix">
+                      <button type="button" className="lien-bouton" onClick={() => relancer(c.id)}>
                         <IconePlay /> Reprendre
                       </button>
                       <a className="lien" href={`#/historique/${c.id}`}>
@@ -169,7 +174,7 @@ export function DetailEchange({ echange }: { echange?: Conversation }) {
               ))}
             </div>
             <div className="boutons-bas">
-              <button type="button" className="bouton menthe" disabled title="Disponible avec la voix">
+              <button type="button" className="bouton menthe" onClick={() => relancer(echange.id)}>
                 <IconePlay /> Reprendre à la voix
               </button>
               <button

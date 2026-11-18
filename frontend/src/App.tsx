@@ -22,7 +22,7 @@ import { Parametres, ParametresHM } from "./ecrans/Parametres";
 import { aller, useRoute } from "./route";
 import AjoutSouvenir from "./ecrans/AjoutSouvenir";
 import CleDirectes from "./ecrans/CleDirectes";
-import { chargerSouvenirs, enregistrerSouvenirs } from "./memoireStock";
+import { EVENEMENT_MEMOIRE, chargerSouvenirs, enregistrerSouvenirs } from "./memoireStock";
 import { EVENEMENT, chargerConversations, enregistrerConversations } from "./stockage";
 
 function Ecrans() {
@@ -36,6 +36,11 @@ function Ecrans() {
   }, []);
   const [souvenirs, setSouvenirs] = useState<Souvenir[]>(chargerSouvenirs);
   const [vueMemoire, setVueMemoire] = useState<VueMemoire>("liste");
+  useEffect(() => {
+    const maj = () => setSouvenirs(chargerSouvenirs());
+    window.addEventListener(EVENEMENT_MEMOIRE, maj);
+    return () => window.removeEventListener(EVENEMENT_MEMOIRE, maj);
+  }, []);
   useEffect(() => {
     enregistrerSouvenirs(souvenirs);
   }, [souvenirs]);

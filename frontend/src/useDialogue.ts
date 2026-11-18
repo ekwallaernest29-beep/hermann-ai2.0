@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { effacerCode, lireCode } from "./acces";
 import { fetchHermann } from "./direct";
-import { ajouterEchange } from "./stockage";
-import { avecMemoire } from "./memoireStock";
+import { ajouterEchange, historiqueActif, idConversationActive } from "./stockage";
+import { avecMemoire, extraireSouvenir, retenir } from "./memoireStock";
 import { CLES, lirePref, parler, voixFrancaises } from "./voix";
 
 const API = import.meta.env.VITE_API_URL ?? "";
@@ -53,6 +53,7 @@ export function useDialogue() {
   const historique = useRef<Tour[]>([]);
   const ctrl = useRef<AbortController | null>(null);
   const coupe = useRef(false);
+  const dernierActif = useRef("");
   const [fins, setFins] = useState(0);
 
   useEffect(
@@ -104,8 +105,14 @@ export function useDialogue() {
         return;
       }
       setVous(texte);
+      const note = extraireSouvenir(texte);
+      if (note) retenir(note);
       setPhase("reflexion");
 
+      if (dernierActif.current !== idConversationActive()) {
+        historique.current = historiqueActif();
+        dernierActif.current = idConversationActive();
+      }
       let messages: Tour[] = [...historique.current, { role: "user" as const, texte }].slice(-10);
       while (messages.length > 1 && messages[0].role !== "user") messages = messages.slice(1);
 

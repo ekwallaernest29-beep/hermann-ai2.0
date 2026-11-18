@@ -4,6 +4,38 @@ const CLE = "hermann.historique";
 export const EVENEMENT = "hermann-historique";
 const MAX = 50;
 const idSession = `s${Date.now()}`;
+let idActif = idSession;
+let titreReprise: string | null = null;
+
+export function idConversationActive(): string {
+  return idActif;
+}
+
+export function dernierId(): string | null {
+  return chargerConversations()[0]?.id ?? null;
+}
+
+export function reprendre(id: string): boolean {
+  const c = chargerConversations().find((x) => x.id === id);
+  if (!c) return false;
+  idActif = id;
+  titreReprise = c.titre;
+  return true;
+}
+
+export function consommerReprise(): string | null {
+  const t = titreReprise;
+  titreReprise = null;
+  return t;
+}
+
+export function historiqueActif(): { role: "user" | "hermann"; texte: string }[] {
+  const c = chargerConversations().find((x) => x.id === idActif);
+  if (!c) return [];
+  return c.messages
+    .map((m) => ({ role: m.auteur === "vous" ? ("user" as const) : ("hermann" as const), texte: m.texte }))
+    .slice(-10);
+}
 
 export function chargerConversations(): Conversation[] {
   try {
@@ -43,13 +75,13 @@ export function ajouterEchange(vous: string, hermann: string) {
     { auteur: "vous" as const, heure, texte: vous },
     { auteur: "hermann" as const, heure, texte: hermann },
   ];
-  const existante = liste.find((c) => c.id === idSession);
+  const existante = liste.find((c) => c.id === idActif);
   if (existante) {
     existante.messages.push(...messages);
   } else {
     const titre = coupe(vous, 40);
     liste.unshift({
-      id: idSession,
+      id: idActif,
       date,
       heure,
       titre: titre.charAt(0).toUpperCase() + titre.slice(1),

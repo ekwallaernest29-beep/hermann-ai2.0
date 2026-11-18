@@ -13,6 +13,7 @@ import {
 } from "../components/Icones";
 import { ecrireCode, lireCode } from "../acces";
 import { modeDirect } from "../direct";
+import { consommerReprise, dernierId, reprendre } from "../stockage";
 import { ETATS, NOMS, ORDRE, type DefEtat, type Etat } from "../etats";
 import { aller } from "../route";
 import { deverrouillerVoix, useDialogue } from "../useDialogue";
@@ -84,7 +85,10 @@ export default function Accueil() {
   const [etat, setEtat] = useState<Etat>("veille");
   const [demandeCode, setDemandeCode] = useState(false);
   const [saisie, setSaisie] = useState("");
-  const [infoCode, setInfoCode] = useState("");
+  const [infoCode, setInfoCode] = useState(() => {
+    const titre = consommerReprise();
+    return titre ? `Conversation « ${titre} » reprise. Touchez Activer micro pour continuer.` : "";
+  });
   const [verif, setVerif] = useState(false);
   const racine = useRef<HTMLDivElement>(null);
   const finRef = useRef<() => void>(() => {});
@@ -329,7 +333,19 @@ export default function Accueil() {
           titre="Indisponible pour le moment"
           onClick={action.surClic}
         />
-        <Commande libelle="Reprendre" icone={<IconePlay />} desactive titre="Fonction à définir" />
+        <Commande
+          libelle="Reprendre"
+          icone={<IconePlay />}
+          onClick={() => {
+            const id = dernierId();
+            const titre = id && reprendre(id) ? consommerReprise() : null;
+            setInfoCode(
+              titre
+                ? `Conversation « ${titre} » reprise. Touchez Activer micro pour continuer.`
+                : "Aucune conversation à reprendre pour le moment.",
+            );
+          }}
+        />
         <Commande libelle="Veille" icone={<IconeLune />} onClick={() => choisir("veille")} />
       </nav>
 
