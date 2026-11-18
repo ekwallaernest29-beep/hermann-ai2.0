@@ -1,3 +1,4 @@
+import { parlerIA, voixIAActive } from "./voixIA";
 export const CLES = { voix: "hermann.voix", vitesse: "hermann.vitesse" };
 
 export function lirePref(cle: string): string | null {
@@ -24,7 +25,7 @@ export function voixFrancaises(): SpeechSynthesisVoice[] {
     .sort((a, b) => Number(b.localService) - Number(a.localService) || a.name.localeCompare(b.name));
 }
 
-export function parler(texte: string, voix: SpeechSynthesisVoice | undefined, vitesse: number, fin: () => void) {
+function parlerSysteme(texte: string, voix: SpeechSynthesisVoice | undefined, vitesse: number, fin: () => void) {
   const synth = window.speechSynthesis;
   synth.cancel();
   const u = new SpeechSynthesisUtterance(texte);
@@ -34,4 +35,13 @@ export function parler(texte: string, voix: SpeechSynthesisVoice | undefined, vi
   u.onend = fin;
   u.onerror = fin;
   synth.speak(u);
+}
+
+
+export function parler(texte: string, voix: SpeechSynthesisVoice | undefined, vitesse: number, fin: () => void) {
+  if (voixIAActive()) {
+    parlerIA(texte, vitesse, () => parlerSysteme(texte, voix, vitesse, fin), fin);
+    return;
+  }
+  parlerSysteme(texte, voix, vitesse, fin);
 }

@@ -3,6 +3,7 @@ import Entete from "../components/Entete";
 import { IconePlay, IconeStop } from "../components/Icones";
 import { Ligne, Liste } from "../components/Lignes";
 import { aller } from "../route";
+import SectionVoixIA from "./SectionVoixIA";
 import { CLES, ecrirePref, lirePref, parler, voixFrancaises } from "../voix";
 
 const EXTRAIT = "Bonjour, je suis Hermann. Je suis ravi de vous accompagner.";
@@ -91,6 +92,8 @@ export default function VoixLangue() {
                 onChange={(e) => changerVitesse(Number(e.target.value))}
               />
             </div>
+
+            <SectionVoixIA />
 
             <h2 className="groupe">CHOISIR UNE VOIX</h2>
             {voix.length === 0 && (
