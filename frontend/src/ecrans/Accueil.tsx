@@ -1,3 +1,4 @@
+import { lireReglagesMicro } from "../reglagesMicro";
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import Apercu from "../components/Apercu";
 import Entete from "../components/Entete";
@@ -117,7 +118,7 @@ export default function Accueil() {
 
   // Après la réponse de Hermann, le micro se réactive tout seul pour continuer la conversation.
   useEffect(() => {
-    if (dialogue.fins > 0) void micro.demarrer();
+    if (dialogue.fins > 0 && lireReglagesMicro().relance) void micro.demarrer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogue.fins]);
 

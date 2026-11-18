@@ -1,3 +1,4 @@
+import ReglagesMicro from "./ReglagesMicro";
 import VoixLangue from "./VoixLangue";
 import type { ReactNode } from "react";
 import Interrupteur from "../components/Interrupteur";
@@ -373,7 +374,7 @@ export function Reglage({ page }: { page: PageReglage }) {
     case "voix":
       return <VoixLangue />;
     case "microphone":
-      return <Microphone />;
+      return <ReglagesMicro />;
     case "notifications":
       return <Notifications />;
     case "etats":

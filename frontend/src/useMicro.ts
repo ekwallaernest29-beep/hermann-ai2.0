@@ -1,3 +1,4 @@
+import { garderEcranAllume, libererEcran, lireReglagesMicro, seuilsDe } from "./reglagesMicro";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ErreurMicro = { titre: string; texte: string };
@@ -55,6 +56,7 @@ export function useMicro({ onNiveau, onFinParole }: Options = {}) {
     surNiveau.current?.(0);
     setParle(false);
     setStatut("inactif");
+    libererEcran();
   }, []);
 
   const demarrer = useCallback(async () => {
@@ -88,6 +90,8 @@ export function useMicro({ onNiveau, onFinParole }: Options = {}) {
       let fond = 0.005;
       let debutVoix = 0;
       let dernierSon = 0;
+      const reg = lireReglagesMicro();
+      const { seuilMin, facteur } = seuilsDe(reg.sensibilite);
       let enParole = false;
       let lisse = 0;
 
@@ -99,7 +103,7 @@ export function useMicro({ onNiveau, onFinParole }: Options = {}) {
         const rms = Math.sqrt(somme / donnees.length);
 
         if (!enParole && rms < fond * 1.5 + 0.002) fond = fond * 0.95 + rms * 0.05;
-        const seuil = Math.max(0.02, fond * 3);
+        const seuil = Math.max(seuilMin, fond * facteur);
 
         if (rms > seuil) {
           if (!debutVoix) debutVoix = t;
@@ -109,7 +113,7 @@ export function useMicro({ onNiveau, onFinParole }: Options = {}) {
             setParle(true);
           }
         } else if (enParole) {
-          if (t - dernierSon > 1400) {
+          if (t - dernierSon > reg.silenceMs) {
             enParole = false;
             setParle(false);
             surFin.current?.();
@@ -126,6 +130,7 @@ export function useMicro({ onNiveau, onFinParole }: Options = {}) {
 
       raf.current = requestAnimationFrame(boucle);
       setStatut("actif");
+      void garderEcranAllume();
     } catch (e) {
       arreter();
       setErreur(traduire(e));
