@@ -12,6 +12,7 @@ import {
   IconeStop,
 } from "../components/Icones";
 import { ecrireCode, lireCode } from "../acces";
+import { modeDirect } from "../direct";
 import { ETATS, NOMS, ORDRE, type DefEtat, type Etat } from "../etats";
 import { aller } from "../route";
 import { deverrouillerVoix, useDialogue } from "../useDialogue";
@@ -174,7 +175,7 @@ export default function Accueil() {
   };
 
   const activer = () => {
-    if (!lireCode()) {
+    if (!modeDirect() && !lireCode()) {
       setInfoCode("");
       setDemandeCode(true);
       return;
@@ -281,7 +282,7 @@ export default function Accueil() {
       <Entete />
 
       <p className={`serveur serveur-${serveur}`} role="status">
-        {LIBELLE_SERVEUR[serveur]}
+        {modeDirect() ? "Mode direct · sans serveur" : LIBELLE_SERVEUR[serveur]}
       </p>
 
       <main className="scene">

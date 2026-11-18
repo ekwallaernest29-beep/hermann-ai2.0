@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { effacerCode, lireCode } from "./acces";
+import { fetchHermann } from "./direct";
 import { ajouterEchange } from "./stockage";
 import { avecMemoire } from "./memoireStock";
 import { CLES, lirePref, parler, voixFrancaises } from "./voix";
@@ -89,7 +90,7 @@ export function useDialogue() {
     try {
       const form = new FormData();
       form.append("audio", blob, nom);
-      const r1 = await fetch(`${API}/api/voix/transcrire`, {
+      const r1 = await fetchHermann(`${API}/api/voix/transcrire`, {
         method: "POST",
         headers: entetes,
         body: form,
@@ -108,7 +109,7 @@ export function useDialogue() {
       let messages: Tour[] = [...historique.current, { role: "user" as const, texte }].slice(-10);
       while (messages.length > 1 && messages[0].role !== "user") messages = messages.slice(1);
 
-      const r2 = await fetch(`${API}/api/chat`, {
+      const r2 = await fetchHermann(`${API}/api/chat`, {
         method: "POST",
         headers: { ...entetes, "Content-Type": "application/json" },
         body: JSON.stringify({ messages: avecMemoire(messages) }),

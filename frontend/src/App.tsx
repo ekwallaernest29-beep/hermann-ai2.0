@@ -21,6 +21,7 @@ import {
 import { Parametres, ParametresHM } from "./ecrans/Parametres";
 import { aller, useRoute } from "./route";
 import AjoutSouvenir from "./ecrans/AjoutSouvenir";
+import CleDirectes from "./ecrans/CleDirectes";
 import { chargerSouvenirs, enregistrerSouvenirs } from "./memoireStock";
 import { EVENEMENT, chargerConversations, enregistrerConversations } from "./stockage";
 
@@ -114,6 +115,8 @@ function Ecrans() {
       );
     case "souvenir-suppression":
       return <SuppressionSouvenir souvenir={trouverSouvenir(route.id)} confirmer={supprimerSouvenir} />;
+    case "cles":
+      return <CleDirectes />;
     case "souvenir-ajouter":
       return <AjoutSouvenir ajouter={ajouterSouvenir} />;
     case "reglage":
