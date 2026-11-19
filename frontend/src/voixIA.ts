@@ -161,3 +161,104 @@ export function parlerAvec(
 export function parlerIA(texte: string, vitesse: number, secours: () => void, fin: () => void) {
   parlerAvec(texte, lireVoixIA(), vitesse, secours, fin);
 }
+
+// ---------- Lecture phrase par phrase ----------
+function decouper(texte: string): string[] {
+  const propre = nettoyer(texte);
+  const morceaux = propre
+    .replace(/([.!?…])\s+/g, "$1\n")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const phrases: string[] = [];
+  for (const m of morceaux) {
+    const derniere = phrases.length - 1;
+    if (derniere >= 0 && phrases[derniere].length < 25) phrases[derniere] += " " + m;
+    else phrases.push(m);
+  }
+  return phrases;
+}
+
+function jouer(blob: Blob, vitesse: number, signal: AbortSignal): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (signal.aborted) {
+      resolve(false);
+      return;
+    }
+    const el = lecteur();
+    const url = URL.createObjectURL(blob);
+    let fini = false;
+    const clore = (ok: boolean) => {
+      if (fini) return;
+      fini = true;
+      el.onended = null;
+      el.onerror = null;
+      signal.removeEventListener("abort", surAbandon);
+      URL.revokeObjectURL(url);
+      resolve(ok);
+    };
+    const surAbandon = () => clore(false);
+    signal.addEventListener("abort", surAbandon, { once: true });
+    el.onended = () => clore(true);
+    el.onerror = () => clore(false);
+    el.src = url;
+    el.defaultPlaybackRate = vitesse;
+    el.playbackRate = vitesse;
+    el.play().catch(() => clore(false));
+  });
+}
+
+export function parlerIAPhrases(
+  texte: string,
+  vitesse: number,
+  secours: (reste: string) => void,
+  fin: () => void,
+) {
+  arreter(false);
+  const phrases = decouper(texte);
+  if (phrases.length === 0) {
+    fin();
+    return;
+  }
+  const ctrl = new AbortController();
+  controle = ctrl;
+  courant = { url: "", fin };
+  const voix = lireVoixIA();
+  const demandes: Promise<Blob>[] = [];
+  const preparer = (i: number) => {
+    if (i < phrases.length && !demandes[i]) {
+      demandes[i] = synthese(phrases[i], voix, ctrl.signal);
+      demandes[i].catch(() => {});
+    }
+  };
+  const repli = (i: number) => {
+    if (ctrl.signal.aborted) return;
+    courant = null;
+    secours(phrases.slice(i).join(" "));
+  };
+  void (async () => {
+    for (let i = 0; i < phrases.length; i++) {
+      preparer(i);
+      preparer(i + 1);
+      let blob: Blob;
+      try {
+        blob = await demandes[i];
+      } catch {
+        repli(i);
+        return;
+      }
+      if (ctrl.signal.aborted) return;
+      const ok = await jouer(blob, vitesse, ctrl.signal);
+      if (ctrl.signal.aborted) return;
+      if (!ok) {
+        repli(i);
+        return;
+      }
+    }
+    if (controle === ctrl) {
+      courant = null;
+      controle = null;
+      fin();
+    }
+  })();
+}

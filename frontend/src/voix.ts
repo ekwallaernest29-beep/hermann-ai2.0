@@ -1,4 +1,4 @@
-import { parlerIA, voixIAActive } from "./voixIA";
+import { parlerIAPhrases, voixIAActive } from "./voixIA";
 export const CLES = { voix: "hermann.voix", vitesse: "hermann.vitesse" };
 
 export function lirePref(cle: string): string | null {
@@ -40,7 +40,7 @@ function parlerSysteme(texte: string, voix: SpeechSynthesisVoice | undefined, vi
 
 export function parler(texte: string, voix: SpeechSynthesisVoice | undefined, vitesse: number, fin: () => void) {
   if (voixIAActive()) {
-    parlerIA(texte, vitesse, () => parlerSysteme(texte, voix, vitesse, fin), fin);
+    parlerIAPhrases(texte, vitesse, (reste) => parlerSysteme(reste, voix, vitesse, fin), fin);
     return;
   }
   parlerSysteme(texte, voix, vitesse, fin);
