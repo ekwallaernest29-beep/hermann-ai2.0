@@ -13,6 +13,7 @@ const LIGNES: Ligne[] = [
   { titre: "Microphone", detail: "Autorisation et confidentialité", vers: "#/parametres/microphone" },
   { titre: "Historique et mémoire", detail: "Deux espaces à gérer séparément", vers: "#/parametres/historique-memoire" },
   { titre: "Clés IA", detail: "Mode direct, sans serveur", vers: "#/parametres/cles" },
+  { titre: "Sauvegarde", detail: "Exporter ou importer vos données", vers: "#/parametres/sauvegarde" },
   { titre: "Notifications", detail: "Connexion, sécurité et alertes", vers: "#/parametres/notifications", apercu: true },
 ];
 

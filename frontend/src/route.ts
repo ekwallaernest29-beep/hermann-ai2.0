@@ -24,6 +24,7 @@ export type Route =
   | { nom: "souvenir-suppression"; id: string }
   | { nom: "souvenir-ajouter" }
   | { nom: "cles" }
+  | { nom: "sauvegarde" }
   | { nom: "reglage"; page: PageReglage };
 
 const PAGES: PageReglage[] = [
@@ -54,6 +55,7 @@ function lire(): Route {
   if (a === "parametres") {
     if (b === "historique-memoire") return { nom: "parametres-hm" };
     if (b === "cles") return { nom: "cles" };
+    if (b === "sauvegarde") return { nom: "sauvegarde" };
     if (b === "appareils" && c === "revoquer") return { nom: "reglage", page: "revoquer" };
     const page = PAGES.find((p) => p === b);
     if (page) return { nom: "reglage", page };
