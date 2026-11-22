@@ -1,6 +1,7 @@
 import ReglagesMicro from "./ReglagesMicro";
 import VoixLangue from "./VoixLangue";
 import type { ReactNode } from "react";
+import SecuriteReelle from "./Securite";
 import Interrupteur from "../components/Interrupteur";
 import {
   IconeAvertissement,
@@ -364,7 +365,7 @@ export function Reglage({ page }: { page: PageReglage }) {
     case "compte":
       return <Compte />;
     case "securite":
-      return <Securite />;
+      return <SecuriteReelle />;
     case "appareils":
       return <Appareils />;
     case "revoquer":

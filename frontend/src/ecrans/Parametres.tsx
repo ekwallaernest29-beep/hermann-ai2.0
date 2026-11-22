@@ -6,7 +6,7 @@ type Ligne = { titre: string; detail: string; vers: string; apercu?: boolean };
 
 const LIGNES: Ligne[] = [
   { titre: "Compte", detail: "Profil et informations personnelles", vers: "#/parametres/compte", apercu: true },
-  { titre: "Sécurité", detail: "Mot de passe, 2FA et sessions", vers: "#/parametres/securite", apercu: true },
+  { titre: "Sécurité", detail: "Code de verrouillage de l’appli", vers: "#/parametres/securite" },
   { titre: "Appareils", detail: "Gérer les appareils autorisés", vers: "#/parametres/appareils", apercu: true },
   { titre: "Synchronisation", detail: "Cloud et mises à jour", vers: "#/parametres/synchronisation", apercu: true },
   { titre: "Voix et langue", detail: "Voix de Hermann et préférences", vers: "#/parametres/voix" },
