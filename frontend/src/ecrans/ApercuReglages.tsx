@@ -1,6 +1,7 @@
 import ReglagesMicro from "./ReglagesMicro";
 import VoixLangue from "./VoixLangue";
 import type { ReactNode } from "react";
+import CompteReel from "./Compte";
 import SecuriteReelle from "./Securite";
 import Interrupteur from "../components/Interrupteur";
 import {
@@ -363,7 +364,7 @@ function EtatsService() {
 export function Reglage({ page }: { page: PageReglage }) {
   switch (page) {
     case "compte":
-      return <Compte />;
+      return <CompteReel />;
     case "securite":
       return <SecuriteReelle />;
     case "appareils":

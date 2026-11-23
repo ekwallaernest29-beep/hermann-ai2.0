@@ -1,3 +1,4 @@
+import { prenomAffiche } from "./profil";
 export type Etat = "veille" | "ecoute" | "reflexion" | "parole" | "interruption";
 
 export type DefEtat = {
@@ -10,7 +11,9 @@ export type DefEtat = {
 export const ETATS: Record<Etat, DefEtat> = {
   veille: {
     badge: "HERMANN EST EN VEILLE",
-    titre: "Bonjour, Hermann.",
+    get titre() {
+      return `Bonjour, ${prenomAffiche()}.`;
+    },
     texte: "Votre assistant personnel intelligent.",
     detail: "Micro désactivé · Activez-le pour parler.",
   },
